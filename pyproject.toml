@@ -1,0 +1,30 @@
+[project]
+name = "pyedstem"
+version = "0.1.0"
+description = "Easy-to-use Python client for the Ed Stem API"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "httpx>=0.28.1",
+    "markdownify>=1.2.0",
+    "pydantic>=2.11.3",
+    "pydantic-settings>=2.8.1",
+]
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/pyedstem"]
+
+[tool.hatch.build.targets.wheel.sources]
+"src" = ""
+
+[dependency-groups]
+dev = [
+    "pytest>=8.4.2",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["src"]
