@@ -20,6 +20,7 @@ class TestEdStemClient:
         assert client.lessons is not None
         assert client.analytics is not None
         assert client.challenges is not None
+        assert not hasattr(client, "workflows")
 
         client.close()
 

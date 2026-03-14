@@ -10,7 +10,7 @@ from pyedstem.models import PostedComment, ThreadDetail, ThreadSummary
 from pyedstem.transport import EdStemTransport
 
 
-class ThreadsResource:
+class Threads:
     """Access thread listing, details, and answer posting."""
 
     def __init__(self, transport: EdStemTransport) -> None:

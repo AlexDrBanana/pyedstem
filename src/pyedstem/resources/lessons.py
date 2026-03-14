@@ -8,7 +8,7 @@ from pyedstem.models import LessonDetail, LessonSummary, SlideSummary
 from pyedstem.transport import EdStemTransport
 
 
-class LessonsResource:
+class Lessons:
     """Access lessons, slides, and lesson-derived endpoints."""
 
     def __init__(self, transport: EdStemTransport) -> None:

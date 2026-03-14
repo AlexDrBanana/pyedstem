@@ -2,6 +2,8 @@
 
 Typed Python client for the Ed Stem API.
 
+**Documentation:** [alexdrbanana.github.io/pyedstem](https://alexdrbanana.github.io/pyedstem/)
+
 `pyedstem` provides a small, sync-first interface for common Ed Stem tasks such
 as listing active courses, retrieving discussion threads, reading lessons, and
 posting answers back to Ed using the XML document format the API expects.
@@ -57,7 +59,7 @@ for course in active_courses:
     print(course.id, course.code, course.name)
 ```
 
-### Fetch unanswered discussion threads
+### Fetch recent discussion threads
 
 ```python
 from pyedstem import EdStemClient
@@ -65,7 +67,7 @@ from pyedstem import EdStemClient
 course_id = 12345
 
 with EdStemClient.from_env() as client:
-    threads = client.workflows.list_course_unanswered_threads(course_id)
+    threads = client.threads.list(course_id, limit=20, sort="date")
 
 for thread in threads:
     print(f"#{thread.number}: {thread.title}")
@@ -87,7 +89,6 @@ with EdStemClient.from_env() as client:
 
 - typed models for common Ed Stem responses
 - sync-first client API with resource groups
-- workflow helpers for active-course and unanswered-thread automation
 - markdown-to-Ed document conversion for answer posting
 - opt-in live contract tests for undocumented API drift detection
 
@@ -126,68 +127,17 @@ uv run pytest tests/live/test_write_endpoint_contracts.py
 
 Only enable the write suite when it is safe to mutate real Ed data.
 
-## Publishing
-
-Build distribution artifacts with:
-
-```bash
-uv build
-```
-
-### Recommended: GitHub Actions trusted publishing
-
-This repository now includes `.github/workflows/publish.yml`, which:
-
-- runs tests
-- builds the wheel and source distribution
-- checks package metadata with `twine check`
-- publishes to PyPI using GitHub Actions OIDC trusted publishing
-
-To enable it for this repository:
-
-1. In PyPI, open the `pyedstem` project and add a **Trusted Publisher** under **Manage → Publishing**.
-2. Use these values for the publisher configuration:
-    - **Owner**: `AlexDrBanana`
-    - **Repository name**: `pyedstem`
-    - **Workflow name**: `publish.yml`
-    - **Environment name**: leave this blank
-3. Publish by creating a GitHub release, or run the workflow manually from the Actions tab.
-
-No PyPI token needs to be stored in GitHub secrets for this flow.
-
-If you later want an approval gate in GitHub before publishing, you can add a
-GitHub environment such as `pypi` and then update the trusted publisher config
-to match it.
-
 ## Documentation
 
-This repository can also publish an automatic docs site from code docstrings
-using MkDocs and `mkdocstrings`.
+Full documentation is available at:
 
-- local preview: `uv sync --group dev --group docs && uv run mkdocs serve`
-- production docs: `.github/workflows/docs.yml`
-- published site URL: `https://alexdrbanana.github.io/pyedstem/`
+[alexdrbanana.github.io/pyedstem](https://alexdrbanana.github.io/pyedstem/)
 
-To enable GitHub Pages deployment:
-
-1. In GitHub, open **Settings → Pages**.
-2. Set **Source** to **GitHub Actions**.
-3. Push to `main` or run the docs workflow manually.
-
-Because the docs workflow also runs on published releases, the package release
-and docs deployment stay in sync automatically.
-
-### Manual fallback
-
-If you ever want to publish locally instead, you can still use the named `uv`
-index and provide credentials through environment variables:
+If you're contributing to the project and want to preview the docs locally:
 
 ```bash
-UV_INDEX_PYPI_RELEASE_USERNAME=__token__ \
-UV_INDEX_PYPI_RELEASE_PASSWORD=your-pypi-token \
-uv publish --index pypi-release
+uv sync --group dev --group docs
+uv run mkdocs serve
 ```
 
-The `pypi-release` index is configured in `pyproject.toml` with the correct
-PyPI download and upload URLs. Keep credentials out of the file and provide
-them only at publish time.
+Then open the local URL shown by MkDocs.

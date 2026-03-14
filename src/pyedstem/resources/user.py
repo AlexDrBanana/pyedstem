@@ -6,7 +6,7 @@ from pyedstem.models import CurrentUserResponse
 from pyedstem.transport import EdStemTransport
 
 
-class UserResource:
+class User:
     """Access user-centric Ed endpoints."""
 
     def __init__(self, transport: EdStemTransport) -> None:

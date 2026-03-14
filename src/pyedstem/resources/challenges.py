@@ -7,7 +7,7 @@ from typing import Any
 from pyedstem.transport import EdStemTransport
 
 
-class ChallengesResource:
+class Challenges:
     """Access challenge listing endpoints."""
 
     def __init__(self, transport: EdStemTransport) -> None:

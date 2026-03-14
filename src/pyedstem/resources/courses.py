@@ -6,10 +6,9 @@ from typing import Any
 
 from pyedstem.models import CourseInfo, CurrentUserResponse, UserSummary
 from pyedstem.transport import EdStemTransport
-from pyedstem.workflows import get_active_courses
 
 
-class CoursesResource:
+class Courses:
     """Access course endpoints and common derived course views."""
 
     def __init__(self, transport: EdStemTransport) -> None:
@@ -19,7 +18,11 @@ class CoursesResource:
         """Return only courses marked active by Ed."""
         payload = self._transport.get_json("/user")
         current_user = CurrentUserResponse.model_validate(payload)
-        return get_active_courses(current_user.courses)
+        return [
+            enrollment.course
+            for enrollment in current_user.courses
+            if enrollment.course.status == "active"
+        ]
 
     def get(self, course_id: int) -> CourseInfo:
         """Fetch detailed metadata for one course."""

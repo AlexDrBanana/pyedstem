@@ -7,14 +7,13 @@ from typing import Any
 import httpx
 
 from pyedstem.config import get_settings
-from pyedstem.resources.analytics import AnalyticsResource
-from pyedstem.resources.challenges import ChallengesResource
-from pyedstem.resources.courses import CoursesResource
-from pyedstem.resources.lessons import LessonsResource
-from pyedstem.resources.threads import ThreadsResource
-from pyedstem.resources.user import UserResource
+from pyedstem.resources.analytics import Analytics
+from pyedstem.resources.challenges import Challenges
+from pyedstem.resources.courses import Courses
+from pyedstem.resources.lessons import Lessons
+from pyedstem.resources.threads import Threads
+from pyedstem.resources.user import User
 from pyedstem.transport import EdStemTransport
-from pyedstem.workflow_client import WorkflowClient
 
 
 class EdStemClient:
@@ -34,13 +33,12 @@ class EdStemClient:
             timeout_seconds=timeout_seconds,
             client=http_client,
         )
-        self.user = UserResource(self._transport)
-        self.courses = CoursesResource(self._transport)
-        self.threads = ThreadsResource(self._transport)
-        self.lessons = LessonsResource(self._transport)
-        self.analytics = AnalyticsResource(self._transport)
-        self.challenges = ChallengesResource(self._transport)
-        self.workflows = WorkflowClient(self)
+        self.user = User(self._transport)
+        self.courses = Courses(self._transport)
+        self.threads = Threads(self._transport)
+        self.lessons = Lessons(self._transport)
+        self.analytics = Analytics(self._transport)
+        self.challenges = Challenges(self._transport)
 
     @classmethod
     def from_env(cls) -> "EdStemClient":

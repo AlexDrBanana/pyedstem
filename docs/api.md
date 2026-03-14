@@ -8,12 +8,10 @@
 
 ::: pyedstem.client.EdStemClient
 
+## Course resources
+
+::: pyedstem.resources.courses.Courses
+
 ## Thread resources
 
-::: pyedstem.resources.threads.ThreadsResource
-
-## Workflow helpers
-
-::: pyedstem.workflow_client.WorkflowClient
-
-::: pyedstem.workflows
+::: pyedstem.resources.threads.Threads

@@ -1,6 +1,6 @@
 [project]
 name = "pyedstem"
-version = "0.2.1"
+version = "0.3.0"
 description = "Easy-to-use Python client for the Ed Stem API"
 readme = "README.md"
 requires-python = ">=3.13"
