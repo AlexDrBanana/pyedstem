@@ -159,6 +159,24 @@ If you later want an approval gate in GitHub before publishing, you can add a
 GitHub environment such as `pypi` and then update the trusted publisher config
 to match it.
 
+## Documentation
+
+This repository can also publish an automatic docs site from code docstrings
+using MkDocs and `mkdocstrings`.
+
+- local preview: `uv sync --group dev --group docs && uv run mkdocs serve`
+- production docs: `.github/workflows/docs.yml`
+- published site URL: `https://alexdrbanana.github.io/pyedstem/`
+
+To enable GitHub Pages deployment:
+
+1. In GitHub, open **Settings → Pages**.
+2. Set **Source** to **GitHub Actions**.
+3. Push to `main` or run the docs workflow manually.
+
+Because the docs workflow also runs on published releases, the package release
+and docs deployment stay in sync automatically.
+
 ### Manual fallback
 
 If you ever want to publish locally instead, you can still use the named `uv`
