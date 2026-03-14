@@ -28,7 +28,7 @@ class TestEdStemClient:
         with EdStemClient(api_token="token") as client:
             assert isinstance(client._transport.client, httpx.Client)
 
-    def test_client_uses_workspace_default_base_url(self) -> None:
+    def test_client_uses_documented_default_base_url(self) -> None:
         """The client should default to the documented Ed Stem API base URL."""
         client = EdStemClient(api_token="token")
 

@@ -24,5 +24,5 @@ class EdStemSettings(BaseSettings):
 
 @lru_cache(maxsize=1)
 def get_settings() -> EdStemSettings:
-    """Load and cache workspace settings for the client."""
+    """Load and cache environment-backed settings for the client."""
     return EdStemSettings()

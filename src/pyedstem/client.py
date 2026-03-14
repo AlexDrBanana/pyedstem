@@ -44,7 +44,7 @@ class EdStemClient:
 
     @classmethod
     def from_env(cls) -> "EdStemClient":
-        """Create a client from workspace environment configuration."""
+        """Create a client from environment configuration."""
         settings = get_settings()
         return cls(
             api_token=settings.api_token.get_secret_value(),
@@ -71,6 +71,4 @@ class EdStemClient:
 
     def __exit__(self, exc_type: object, exc: object, tb: object) -> None:
         """Always close HTTP resources when leaving a context manager."""
-        self.close()
-        self.close()
         self.close()
