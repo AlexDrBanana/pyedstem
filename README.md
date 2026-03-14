@@ -141,3 +141,7 @@ uv run mkdocs serve
 ```
 
 Then open the local URL shown by MkDocs.
+
+## License
+
+This project is licensed under the Apache License 2.0. See `LICENSE` for details.

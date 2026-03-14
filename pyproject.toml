@@ -3,6 +3,7 @@ name = "pyedstem"
 version = "0.3.0"
 description = "Easy-to-use Python client for the Ed Stem API"
 readme = "README.md"
+license = { file = "LICENSE" }
 requires-python = ">=3.13"
 authors = [
     { name = "AlexDrBanana" },
@@ -12,6 +13,7 @@ classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "Intended Audience :: Education",
+    "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.13",
     "Programming Language :: Python :: 3.14",
@@ -47,6 +49,17 @@ packages = ["src/pyedstem"]
 
 [tool.hatch.build.targets.wheel.sources]
 "src" = ""
+
+[tool.hatch.build.targets.sdist]
+include = [
+    "/src",
+    "/tests",
+    "/docs",
+    "/README.md",
+    "/LICENSE",
+    "/mkdocs.yml",
+    "/pyproject.toml",
+]
 
 [dependency-groups]
 dev = [
