@@ -14,7 +14,19 @@ _FENCED_CODE_BLOCK_RE = re.compile(
 
 
 def markdown_to_ed_document(markdown: str) -> str:
-    """Convert markdown into the Ed XML document format used for comments."""
+    """Convert markdown into the Ed XML document format used by comments.
+
+    The converter currently preserves plain paragraphs and fenced code blocks.
+    Non-code text is split into paragraph elements, while fenced blocks are
+    emitted as Ed ``codeblock`` elements.
+
+    Args:
+        markdown: Markdown source to convert.
+
+    Returns:
+        A string containing an Ed ``<document version="2.0">`` payload.
+        Blank input produces a minimal empty paragraph document.
+    """
     stripped = markdown.strip()
     if not stripped:
         return '<document version="2.0"><paragraph></paragraph></document>'
@@ -47,12 +59,29 @@ def markdown_to_ed_document(markdown: str) -> str:
 
 
 def html_to_markdown(content: str) -> str:
-    """Convert Ed HTML content into markdown for local staging files."""
+    """Convert Ed HTML content into markdown.
+
+    This is mainly useful when exporting or staging existing Ed thread content
+    for local review and editing.
+
+    Args:
+        content: HTML content returned by Ed.
+
+    Returns:
+        A markdown representation of the HTML content with ATX headings.
+    """
     return html_to_markdown_converter(content or "", heading_style="ATX").strip()
 
 
 def _paragraph_blocks(text: str) -> list[str]:
-    """Convert free-form markdown text into Ed XML paragraphs."""
+    """Convert free-form markdown text into Ed XML paragraph blocks.
+
+    Args:
+        text: Markdown text without fenced code blocks.
+
+    Returns:
+        A list of serialized Ed ``<paragraph>`` elements.
+    """
     paragraphs = [chunk.strip() for chunk in text.split("\n\n") if chunk.strip()]
     xml_paragraphs: list[str] = []
 

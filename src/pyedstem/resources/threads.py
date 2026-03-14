@@ -11,7 +11,11 @@ from pyedstem.transport import EdStemTransport
 
 
 class Threads:
-    """Access thread listing, details, and answer posting."""
+    """Access discussion thread listing, search, detail, and answer posting.
+
+    This resource wraps the main discussion endpoints used for reading course
+    threads and posting staff answers.
+    """
 
     def __init__(self, transport: EdStemTransport) -> None:
         self._transport = transport
@@ -25,7 +29,19 @@ class Threads:
         sort: str = "date",
         **filters: Any,
     ) -> List[ThreadSummary]:
-        """Fetch a page of threads for a course."""
+        """Fetch one page of threads for a course.
+
+        Args:
+            course_id: Numeric Ed course identifier.
+            limit: Maximum number of threads to return.
+            offset: Pagination offset for the result page.
+            sort: Sort mode understood by Ed, such as ``"date"``.
+            **filters: Additional query-string filters forwarded directly to
+                the endpoint, for example ``filter="unanswered"``.
+
+        Returns:
+            A list of validated ``ThreadSummary`` models.
+        """
         params = {"limit": limit, "offset": offset, "sort": sort, **filters}
         payload = self._transport.get_json(
             f"/courses/{course_id}/threads", params=params
@@ -42,7 +58,19 @@ class Threads:
         sort: str = "date",
         **filters: Any,
     ) -> Iterator[ThreadSummary]:
-        """Iterate through paginated thread results."""
+        """Iterate through all available paginated thread results.
+
+        Args:
+            course_id: Numeric Ed course identifier.
+            limit: Page size for each underlying list request.
+            sort: Sort mode understood by Ed, such as ``"date"``.
+            **filters: Additional query-string filters forwarded directly to
+                each list request.
+
+        Yields:
+            ``ThreadSummary`` objects one at a time until the endpoint is
+            exhausted.
+        """
         offset = 0
 
         while True:
@@ -65,19 +93,42 @@ class Threads:
             offset += limit
 
     def get(self, thread_id: int) -> ThreadDetail:
-        """Fetch full details for one thread."""
+        """Fetch full details for one thread.
+
+        Args:
+            thread_id: Global Ed thread identifier.
+
+        Returns:
+            A validated ``ThreadDetail`` model including answers and comments.
+        """
         payload = self._transport.get_json(f"/threads/{thread_id}")
         return ThreadDetail.model_validate(payload["thread"])
 
     def get_by_number(self, course_id: int, thread_number: int) -> ThreadDetail:
-        """Fetch a course thread by its local number."""
+        """Fetch a course thread by its course-local thread number.
+
+        Args:
+            course_id: Numeric Ed course identifier.
+            thread_number: Thread number as displayed within the course.
+
+        Returns:
+            A validated ``ThreadDetail`` model for the matching thread.
+        """
         payload = self._transport.get_json(
             f"/courses/{course_id}/threads/{thread_number}"
         )
         return ThreadDetail.model_validate(payload["thread"])
 
     def search(self, course_id: int, *, query: str) -> List[ThreadSummary]:
-        """Search for threads in a course."""
+        """Search for threads in a course.
+
+        Args:
+            course_id: Numeric Ed course identifier.
+            query: Free-text search string.
+
+        Returns:
+            A list of validated ``ThreadSummary`` models matching the query.
+        """
         payload = self._transport.get_json(
             f"/courses/{course_id}/threads/search",
             params={"query": query},
@@ -94,7 +145,22 @@ class Threads:
         is_anonymous: bool = False,
         is_private: bool = False,
     ) -> PostedComment:
-        """Post an Ed XML answer to a thread."""
+        """Post an answer to a thread using markdown input.
+
+        The markdown is converted into the XML document format expected by the
+        Ed comments endpoint.
+
+        Args:
+            thread_id: Global Ed thread identifier.
+            markdown: Answer body written in markdown.
+            is_anonymous: Whether the answer should be posted anonymously.
+            is_private: Whether the answer should be visible only to staff and
+                the thread author.
+
+        Returns:
+            A validated ``PostedComment`` model representing the created
+            answer or comment object returned by Ed.
+        """
         payload = self._transport.post_json(
             f"/threads/{thread_id}/comments",
             json_body={

@@ -14,6 +14,13 @@ class Challenges:
         self._transport = transport
 
     def list(self, course_id: int) -> list[dict[str, Any]]:
-        """List challenges for a course."""
+        """List challenges for a course.
+
+        Args:
+            course_id: Numeric Ed course identifier.
+
+        Returns:
+            A list of raw challenge dictionaries returned by Ed.
+        """
         payload = self._transport.get_json(f"/courses/{course_id}/challenges")
         return payload.get("challenges", [])

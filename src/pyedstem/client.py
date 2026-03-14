@@ -17,7 +17,30 @@ from pyedstem.transport import EdStemTransport
 
 
 class EdStemClient:
-    """High-level sync client for the Ed Stem API."""
+    """High-level synchronous client for the Ed Stem API.
+
+    This is the main entry point for the library. It owns a shared HTTP
+    transport and exposes grouped resource clients for the supported endpoint
+    areas, such as courses, threads, lessons, analytics, challenges, and the
+    authenticated user.
+
+    Args:
+        api_token: Ed Stem API bearer token.
+        base_url: Base URL for the Ed Stem API. Defaults to the public hosted
+            API endpoint.
+        timeout_seconds: Request timeout applied to the underlying HTTP client.
+        http_client: Optional preconfigured ``httpx.Client``. When provided,
+            it is used directly instead of constructing a new client.
+
+    Attributes:
+        user: User-related endpoints.
+        courses: Course metadata and course-scoped collections.
+        threads: Discussion thread listing, search, detail lookup, and answer
+            posting.
+        lessons: Lesson, slide, and result endpoints.
+        analytics: Course analytics endpoints.
+        challenges: Course challenge listing endpoints.
+    """
 
     def __init__(
         self,
@@ -42,7 +65,18 @@ class EdStemClient:
 
     @classmethod
     def from_env(cls) -> "EdStemClient":
-        """Create a client from environment configuration."""
+        """Create a client from environment-backed settings.
+
+        The settings are loaded from ``EDSTEM_*`` environment variables and,
+        by default, from a local ``.env`` file.
+
+        Returns:
+            A configured ``EdStemClient`` instance.
+
+        Raises:
+            pydantic.ValidationError: If required settings such as
+                ``EDSTEM_API_TOKEN`` are missing or invalid.
+        """
         settings = get_settings()
         return cls(
             api_token=settings.api_token.get_secret_value(),
@@ -51,7 +85,11 @@ class EdStemClient:
         )
 
     def close(self) -> None:
-        """Close the underlying HTTP transport."""
+        """Close the underlying HTTP transport.
+
+        Call this method when the client is no longer needed, unless the client
+        is already being managed via a ``with`` statement.
+        """
         self._transport.close()
 
     def get_json(
@@ -60,13 +98,43 @@ class EdStemClient:
         *,
         params: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
-        """Perform a raw JSON GET request for less common endpoints."""
+        """Perform a raw JSON ``GET`` request for less common endpoints.
+
+        This is a convenience escape hatch for endpoints that are not yet
+        wrapped by a first-class resource method.
+
+        Args:
+            path: API path relative to the configured base URL, for example
+                ``"/courses/123/resources"``.
+            params: Optional query-string parameters.
+
+        Returns:
+            The decoded JSON response body as a dictionary.
+
+        Raises:
+            AuthenticationError: If the API token is rejected.
+            NotFoundError: If the requested endpoint or resource does not
+                exist.
+            RateLimitError: If the API rate-limits the request.
+            ValidationError: If Ed rejects the request as invalid.
+            ServerError: If Ed returns a server-side failure.
+        """
         return self._transport.get_json(path, params=params)
 
     def __enter__(self) -> "EdStemClient":
-        """Enter a context-managed client session."""
+        """Enter a context-managed client session.
+
+        Returns:
+            The current client instance.
+        """
         return self
 
     def __exit__(self, exc_type: object, exc: object, tb: object) -> None:
-        """Always close HTTP resources when leaving a context manager."""
+        """Close HTTP resources when leaving a context manager.
+
+        Args:
+            exc_type: Exception type raised inside the context, if any.
+            exc: Exception instance raised inside the context, if any.
+            tb: Traceback associated with the exception, if any.
+        """
         self.close()
