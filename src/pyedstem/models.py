@@ -60,13 +60,14 @@ class CourseEnrollment(FlexibleModel):
 
     Attributes:
         course: Embedded course metadata.
-        role: The authenticated user's role in the course.
+        role: The authenticated user's role in the course. Ed may return this
+            either as a simple role string or as an enrollment metadata object.
         lab: Lab or tutorial assignment, when present.
         last_active: Timestamp for recent course activity, when present.
     """
 
     course: CourseInfo
-    role: str | None = None
+    role: str | dict[str, Any] | None = None
     lab: str | None = None
     last_active: str | None = None
 
